@@ -50,38 +50,38 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 SECONDARY_FLASH += \
-Pendulum_Stand.hex \
+Attitude_Determination.hex \
 
 SECONDARY_SIZE += \
-Pendulum_Stand.siz \
+Attitude_Determination.siz \
 
 
 # All Target
-all: Pendulum_Stand.elf secondary-outputs
+all: Attitude_Determination.elf secondary-outputs
 
 # Tool invocations
-Pendulum_Stand.elf: $(OBJS) $(USER_OBJS)
+Attitude_Determination.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross ARM C++ Linker'
-	arm-none-eabi-g++ -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -T mem.ld -T libs.ld -T sections.ld -nostartfiles -Xlinker --gc-sections -L"../ldscripts" -Wl,-Map,"Pendulum_Stand.map" --specs=nano.specs -o "Pendulum_Stand.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-g++ -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -T mem.ld -T libs.ld -T sections.ld -nostartfiles -Xlinker --gc-sections -L"../ldscripts" -Wl,-Map,"Attitude_Determination.map" --specs=nano.specs -o "Attitude_Determination.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-Pendulum_Stand.hex: Pendulum_Stand.elf
+Attitude_Determination.hex: Attitude_Determination.elf
 	@echo 'Invoking: Cross ARM GNU Create Flash Image'
-	arm-none-eabi-objcopy -O ihex "Pendulum_Stand.elf"  "Pendulum_Stand.hex"
+	arm-none-eabi-objcopy -O ihex "Attitude_Determination.elf"  "Attitude_Determination.hex"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Pendulum_Stand.siz: Pendulum_Stand.elf
+Attitude_Determination.siz: Attitude_Determination.elf
 	@echo 'Invoking: Cross ARM GNU Print Size'
-	arm-none-eabi-size --format=berkeley "Pendulum_Stand.elf"
+	arm-none-eabi-size --format=berkeley "Attitude_Determination.elf"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(CC_DEPS)$(C++_DEPS)$(OBJS)$(C_UPPER_DEPS)$(CXX_DEPS)$(SECONDARY_FLASH)$(SECONDARY_SIZE)$(ASM_DEPS)$(S_UPPER_DEPS)$(C_DEPS)$(CPP_DEPS) Pendulum_Stand.elf
+	-$(RM) $(CC_DEPS)$(C++_DEPS)$(OBJS)$(C_UPPER_DEPS)$(CXX_DEPS)$(SECONDARY_FLASH)$(SECONDARY_SIZE)$(ASM_DEPS)$(S_UPPER_DEPS)$(C_DEPS)$(CPP_DEPS) Attitude_Determination.elf
 	-@echo ' '
 
 secondary-outputs: $(SECONDARY_FLASH) $(SECONDARY_SIZE)

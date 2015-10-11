@@ -43,6 +43,9 @@ typedef struct {
 #define task4_period 1000
 #define valve_delay_time 30
 
+/* Constant Declarations ------------------------------------------------------*/
+
+
 /* Private Variable Declarations ---------------------------------------------*/
 
 /* OS and ARM Variable Declarations ------------------------------------------*/
@@ -50,10 +53,10 @@ UART_HandleTypeDef huart2;
 I2C_HandleTypeDef hi2c1;
 ADC_HandleTypeDef hadc1;
 
-osThreadId task1Thread; //Accelerometer Reading
-osThreadId task2Thread; //valve control circuit
+osThreadId task1Thread; //IMU Reading
+osThreadId task2Thread; //LED blinking
 osThreadId task3Thread; //read Queue and UART Transmission
-osThreadId task4Thread; //Distance Sensor Reading
+osThreadId task4Thread; //empty
 osMessageQId osQueue; // Queue Declaration
 osMessageQId distance_queue; // Queue Declaration
 extern osMessageQId valve_queue; // Queue Declaration
@@ -117,12 +120,16 @@ int main(void)
 	osMessageQDef(valve_queue, 2, uint32_t);
 	valve_queue = osMessageCreate (osMessageQ(valve_queue), NULL);
 
+	/* IMU Module Initialization */
+	mpu6050_init(&hi2c1);
+	hmc5883l_init(&hi2c1);
+
 	/* Start freeRTOS kernel */
 	osKernelStart();
 	while (1);
 }
 
-/* Task 1 : Find Accelerometer Reading----------------------------------------------------*/
+/* Task 1 : IMU Reading ----------------------------------------------------*/
 /* for now is just led blinking and queue testing */
 void task1Function(void const * argument)
 {
@@ -149,7 +156,6 @@ void task1Function(void const * argument)
 		//		}
 		//		HAL_ADC_Stop(&hadc1);
 		//
-		//		adc = read_TMP006(&hi2c1);
 
 
 		// Write Voltage, Current and Counter to
@@ -163,30 +169,30 @@ void task1Function(void const * argument)
 	}
 }
 
-/* Task 2: Valve Control -------------------------------------------------------------------- */
+/* Task 2: LED blinking -------------------------------------------------------------------- */
 void task2Function (void const * argument)
 {
-	uint32_t *valve_ptr;
-	osEvent valve_event;
-	uint32_t valve_enable;
+//	uint32_t *valve_ptr;
+//	osEvent valve_event;
+//	uint32_t valve_enable;
 
 	while(1)
 	{
-		valve_event = osMessageGet(valve_queue, NULL);
-
-		if (valve_event.status == osEventMessage)
-		{
-    		valve_ptr = valve_event.value.p;
-    		valve_enable = *valve_ptr;
-    		osPoolFree(valve_pool, valve_ptr);
-
-    		if (valve_enable == 1)
-    		{
+//		valve_event = osMessageGet(valve_queue, NULL);
+//
+//		if (valve_event.status == osEventMessage)
+//		{
+//    		valve_ptr = valve_event.value.p;
+//    		valve_enable = *valve_ptr;
+//    		osPoolFree(valve_pool, valve_ptr);
+//
+//    		if (valve_enable == 1)
+//    		{
     			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5); // HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);
-    			HAL_Delay(valve_delay_time);
-    			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5); // HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);
-    		}
-		}
+//    			HAL_Delay(valve_delay_time);
+//    			/* HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);*/ HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);
+//    		}
+//		}
 
 		osDelay(task2_period);
 
@@ -234,9 +240,12 @@ void task3Function(void const * argument)
 
 		//UART Transmission
 		memset(data_transmit, '0', 30);
-		snprintf(data_transmit, sizeof(data_transmit), "%d,%d,%d,%d\n\r", voltage, current, counter, distance); //will send old values if the sensors have not updated it yet
-		HAL_UART_Transmit(&huart2, (uint8_t*)data_transmit, strlen(data_transmit), 0xFFFF);
+//		snprintf(data_transmit, sizeof(data_transmit), "%d,%d,%d,%d\n\r", voltage, current, counter, distance); //will send old values if the sensors have not updated it yet
 
+		voltage = hmc5883l_init(&hi2c1);
+		snprintf(data_transmit, sizeof(data_transmit), "%d\n\r", voltage);
+
+		HAL_UART_Transmit(&huart2, (uint8_t*)data_transmit, strlen(data_transmit), 0xFFFF);
 
     	osDelay(task3_period);
 	}
@@ -396,7 +405,7 @@ void MX_I2C1_Init(void)
 {
 
   hi2c1.Instance = I2C1;
-  hi2c1.Init.ClockSpeed = 100000;
+  hi2c1.Init.ClockSpeed = 400000; //I2C speed is 100 kHz
   hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
