@@ -28,6 +28,7 @@ CPP_DEPS :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 src/Devices \
+src/Function\ Templates \
 src \
 system/src/FreeRTOS \
 system/src/cmsis \

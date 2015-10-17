@@ -14,6 +14,7 @@ RM := rm -rf
 -include system/src/cortexm/subdir.mk
 -include system/src/cmsis/subdir.mk
 -include system/src/FreeRTOS/subdir.mk
+-include src/Function\ Templates/subdir.mk
 -include src/Devices/subdir.mk
 -include src/subdir.mk
 -include subdir.mk
