@@ -39,7 +39,8 @@ src/main.o: ../src/main.c ../system/include/stm32f4xx/stm32f4xx_hal.h \
  ../system/include/FreeRTOS/timers.h ../system/include/FreeRTOS/queue.h \
  ../system/include/FreeRTOS/semphr.h \
  ../system/include/FreeRTOS/event_groups.h ../include/ee_functions.h \
- ../include/ee_hmc5883l.h ../include/ee_mpu6050.h
+ ../include/ee_hmc5883l.h ../include/ee_mpu6050.h ../include/ee_kalman.h \
+ ../include/ee_3Dcoordinates.h
 
 ../system/include/stm32f4xx/stm32f4xx_hal.h:
 
@@ -134,3 +135,7 @@ src/main.o: ../src/main.c ../system/include/stm32f4xx/stm32f4xx_hal.h \
 ../include/ee_hmc5883l.h:
 
 ../include/ee_mpu6050.h:
+
+../include/ee_kalman.h:
+
+../include/ee_3Dcoordinates.h:
