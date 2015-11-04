@@ -67,6 +67,7 @@ float gyroX = 0, gyroY = 0, gyroZ = 0; // raw roll, pitch, yaw;
 UART_HandleTypeDef huart2;
 I2C_HandleTypeDef hi2c1;
 ADC_HandleTypeDef hadc1;
+UART_HandleTypeDef huart6;
 
 osThreadId task1Thread; //IMU Reading
 osThreadId task2Thread; //LED blinking
@@ -82,6 +83,9 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_USART6_UART_Init(void);
+
+
 void IMU_init(void);
 
 void task1Function(void const * argument);
@@ -102,9 +106,12 @@ int main(void)
 	MX_USART2_UART_Init();
 	MX_ADC1_Init();
 	MX_I2C1_Init();
+	MX_USART6_UART_Init();
 
 	/* IMU Module Initialization */
 	IMU_init();
+
+	HAL_Delay(15000);
 
 	/* Threads Creation */
 	osThreadDef(task1, task1Function, osPriorityNormal, 0, 128);
@@ -202,7 +209,7 @@ void task1Function(void const * argument)
     		kalY = update_kalman(pitch, gyroYrate, dt, kalY);
     	}
 
-//    	/* Update Yaw */
+    	/* Update Yaw */
     	obtain_yaw(&yaw, mag, magGain, magOffset, kalX, kalY);
 
     	// This fixes the transition problem when the yaw angle jumps between -180 and 180 degrees
@@ -244,13 +251,14 @@ void task1Function(void const * argument)
 	}
 }
 
-/* Task 2: LED blinking -------------------------------------------------------------------- */
+/* Task 2: Valve On -------------------------------------------------------------------- */
 void task2Function (void const * argument)
 {
 
 	while(1)
 	{
-		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5); // HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);
+		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);
 
 		osDelay(task2_period);
 	}
@@ -271,7 +279,6 @@ void task3Function(void const * argument)
 
 	static char data_transmit[150] = {0};
 	uint32_t timer = 0;
-
 
     while(1)
 	{
@@ -307,10 +314,11 @@ void task3Function(void const * argument)
 			ee_floatTostring(pitch, gyroY_string, 32);
 			ee_floatTostring(yaw, gyroZ_string, 32);
 
-			snprintf(data_transmit, sizeof(data_transmit), "%s,%s,%s,%s,%s,%s\n\r",
+			snprintf(data_transmit, sizeof(data_transmit), "A%s,%s,%s,%s,%s,%sZ\n",
 						kalX_string, kalY_string, kalZ_string, gyroX_string, gyroY_string, gyroZ_string);
 
 			HAL_UART_Transmit(&huart2, (uint8_t*)data_transmit, strlen(data_transmit), 0xFFFF);
+			HAL_UART_Transmit(&huart6, (uint8_t*)data_transmit, strlen(data_transmit), 0xFFFF);
     	}
 
     	osDelay(task3_period);
@@ -459,6 +467,23 @@ void MX_I2C1_Init(void)
   HAL_I2C_Init(&hi2c1);
 
 }
+
+/* USART6 init function */
+void MX_USART6_UART_Init(void)
+{
+
+  huart6.Instance = USART6;
+  huart6.Init.BaudRate = 115200;
+  huart6.Init.WordLength = UART_WORDLENGTH_8B;
+  huart6.Init.StopBits = UART_STOPBITS_1;
+  huart6.Init.Parity = UART_PARITY_NONE;
+  huart6.Init.Mode = UART_MODE_TX_RX;
+  huart6.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart6.Init.OverSampling = UART_OVERSAMPLING_16;
+  HAL_UART_Init(&huart6);
+
+}
+
 
 /* additional code from STM32 */
 #ifdef USE_FULL_ASSERT
