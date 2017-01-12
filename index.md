@@ -7,14 +7,14 @@ This is a model CubeSat used to perform overall testing of the subsystems that w
    
 (3) Sun sensor. This is used to obtain the location of sun with respect to the satellite body. The attitude of the satellite can then be estimated with the sun sensor.     
 
-![Singapore Space Challenge](https://googledrive.com/host/0B3qXE5D5r-qCYzhBUF81cFN6Wlk/12244448_1076856415681904_6874440074577415756_o.jpg)  
+![Singapore Space Challenge](https://dl.dropboxusercontent.com/s/y3ok9bjl0iokjir/space_challenge.jpg?dl=0)  
 _Our CubeSat model in Singapore Space Challenge 2015 - First Runner-Up!_   
     
-![Model CubeSat](https://googledrive.com/host/0B3qXE5D5r-qCYzhBUF81cFN6Wlk/IMG_20151102_203244_HDR.jpg)  
+![Model CubeSat](https://dl.dropboxusercontent.com/s/vtn1witlhqcmxv3/adcs.jpg?dl=0)  
   
 The device is powered by an ARM Cortex-M4F STM32 NUCLEO based driver board. Data is transmitted wirelessly to the main computer (to simulate ground station) and plotted in real time.
   
-![Sun Sensor Testing](https://googledrive.com/host/0B3qXE5D5r-qCYzhBUF81cFN6Wlk/IMG_20151019_221934_HDR.jpg)
+![Sun Sensor Testing](https://dl.dropboxusercontent.com/s/m5ftxcnadlga46e/sun_sensor.jpg?dl=0)
 _Sun Sensor under Testing_  
 
 This project is part of EG3301 [Design Centric Programme](http://www.eng.nus.edu.sg/edic/about.html) (Satellite System Design Track) module at the National University of Singapore.
