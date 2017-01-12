@@ -1,0 +1,8 @@
+title: Attitude Determination System
+description: Edward Elson | Edwin Ferbianto | Chua Weeliang | Zhang Huichen
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-dinky
+
+gems:
+  - jekyll-mentions
