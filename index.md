@@ -1,4 +1,4 @@
-#ABSTRACT
+# ABSTRACT
 This is a model CubeSat used to perform overall testing of the subsystems that we have previously built. The subsystems are:   
    
 (1) Reaction wheel motor. This is often used in a satellite system for attitude control such as pointing to a certain direction i.e. earth (which is useful for taking image of earth).   
